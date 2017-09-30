@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+import ssl, socket, subprocess, time
+import configparser
+
+CONFIG = "ding_server.cfg"
+
+def getTimestamp():
+  t = "[" + time.strftime("%Y-%m-%d %H:%M:%S") + "]"
+  return t
+
+def execFromConfig(option):
+  cfg = configparser.SafeConfigParser()
+  cfg.read(CONFIG)  
+
+  try:
+    cmd = cfg.get("Commands", option).replace("\"", "").replace("\'", "")
+    cmd = cmd.split(" ")
+    try:
+      subprocess.Popen(cmd)
+      return 0
+
+    except FileNotFoundError:
+      print(getTimestamp(), "Can't execute", cmd, ". File not found.")
+      return 2
+
+  except configparser.NoOptionError:
+    print(getTimestamp(), "No execution set:", option)
+    return 1
+
+
+  
+def main():
+
+  while True:
+    newsocket, fromaddr = bindsocket.accept()
+    try:
+      connstream = context.wrap_socket(newsocket, server_side=True)    
+      print(getTimestamp(), "Incoming connection:", fromaddr[0])
+      connstream.send(b"OK 1337\n")
+      
+      con_loop = True
+      while con_loop:
+        try:
+          buf = connstream.recv(1024)
+          if not buf: break
+          buf = buf.decode("utf-8").upper()
+        except ssl.SSLEOFError:
+          print(getTimestamp(), "SSL-EOF-Error.")
+          con_loop = False
+        except ConnectionResetError:
+          print(getTimestamp(), "Connection reset.")
+          serve()
+        
+        print(getTimestamp(), " ", fromaddr[0], ": ", buf, sep="")
+
+        retval = execFromConfig(buf)
+        if(retval == 0):
+          connstream.send(b"OK CMD")
+        elif(retval == 1):
+          connstream.send(b"ERR NO_CMD")
+        elif(retval == 2):
+          connstream.send(b"ERR CMD_ERR")
+        
+
+    except ssl.SSLError as e:
+      print(getTimestamp(), e)
+
+    except EOFError:
+      print(getTimestamp(), "EOF")
+
+def init():
+
+  global host, port, cafile, certfile, keyfile, context, bindsocket
+  
+  cfg = configparser.SafeConfigParser()
+  cfg.read(CONFIG)
+
+  try:
+    host=cfg.get("Server", "host").replace("\"","").replace("\'","")
+    port=int(cfg.get("Server", "port").replace("\"","").replace("\'",""))
+    cafile=cfg.get("Security", "cafile").replace("\"","").replace("\'","")
+    certfile=cfg.get("Security", "certfile").replace("\"","").replace("\'","")
+    keyfile=cfg.get("Security", "keyfile").replace("\"","").replace("\'","")
+  except configparser.NoOptionError as e:
+    print("Error in configuration file:", e)
+    quit(1)
+
+
+  try:
+    context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH, cafile=cafile)
+    context.load_cert_chain(certfile=certfile, keyfile=keyfile)
+    context.verify_mode = ssl.CERT_REQUIRED
+    context.load_verify_locations(cafile=cafile)
+
+  except FileNotFoundError as e:
+    print(e)
+    print("Please check your paths in the config file. (Have you forgotten to generate the Certificates?)")
+    quit(2)
+
+  try:
+    bindsocket = socket.socket()
+    bindsocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    bindsocket.bind((host, port))
+    bindsocket.listen(5)
+  except socket.gaierror:
+    print("Error: Hostname error. Name or service not known.")
+    quit(1)
+  except PermissionError:
+    print("Error: Can't bind for port number ", port, ". Permission denied.", sep="")
+    quit(1)
+ 
+  print("Running ding server on ", host, ":", port, 
+        "\nCAFile: ", cafile, 
+        "\nCertfile: ", certfile, 
+        "\nKeyfile: ", keyfile,
+        "\n===========",
+        sep="")
+ 
+
+if(__name__ == "__main__"):
+
+  try:
+    init()
+    main()
+  except KeyboardInterrupt:
+    print("\r\rServer stopped.")
+

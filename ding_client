@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+import sys, ssl, socket
+import configparser
+
+CONFIG = "ding_client.cfg"
+
+def readConfig():
+  cfg = configparser.SafeConfigParser()
+  try:
+    cfg.read(CONFIG)
+
+    global host, port, cafile, certfile, keyfile
+    
+    host = cfg.get("Client", "host")
+    port = int(cfg.get("Client", "port"))
+
+    cafile = cfg.get("Client", "cafile")
+    certfile = cfg.get("Client", "certfile")
+    keyfile = cfg.get("Client", "keyfile")
+  except configparser.NoSectionError:
+    print("No suitable config found. Expecting some config in", CONFIG)
+    quit(3)
+
+
+def send(conn, cmd):
+
+  global exitcode
+
+  conn.connect((host, port))
+  buf = conn.recv(1024)
+  if(buf == b"OK 1337\n"):  
+    conn.sendall(cmd)
+    buf = conn.recv(1024)
+    if(buf == b"OK CMD"):
+      exitcode = 0
+    elif(buf == b"ERR NO_CMD"):
+      print("Error. Server said: The command doesn't exist/isn't set.", file=sys.stderr)
+      exitcode = 1
+    elif(buf == b"ERR CMD_ERR"):
+      print("Error. Server said: The command doesn't work because the file doesn't exist on the server.")
+      exitcode = 2
+
+  else:
+    conn.sendall(b"NO.")
+    print("The server seems to be crazy. Nothing sent.", file=sys.stderr)
+
+  conn.close()
+
+
+
+def main():
+  try:
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    context.verify_mode = ssl.CERT_REQUIRED
+    context.load_verify_locations(cafile)
+    context.load_cert_chain(certfile=certfile, keyfile=keyfile)
+  except FileNotFoundError as e:
+    print(e)
+    print("Please check your paths in the config file. (Have you forgotten to generate the Certificates?)", sep="", file=sys.stderr)
+    quit(2)
+
+  conn = context.wrap_socket(socket.socket())
+
+
+  try:
+    send(conn, bytes(sys.argv[1], sys.stdin.encoding))
+  except IndexError:
+    print(sys.argv[0], ": Missing argument.\nSyntax: ", sys.argv[0], " <COMMAND>", file=sys.stderr)
+  except ConnectionRefusedError:
+    print("Connection refused.", file=sys.stderr)
+    quit(1)
+  except ssl.SSLError:
+    print("Wrong certificate.", file=sys.stderr);
+    quit(3)
+
+
+
+if(__name__ == "__main__"):
+  readConfig()
+  main()
+  quit(exitcode)
+
