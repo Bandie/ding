@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+
+# Author: Bandie Canis
+# License: 2-Clause BSD License
+
 import sys, ssl, socket
 import configparser
 
