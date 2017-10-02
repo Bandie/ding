@@ -10,6 +10,7 @@ The authentication is done by an SSL Client Certificate signed by an (own genera
 
 ## Pic or didn't happen
 ![Screenshot of CircleArt](/img/dingScreenshot.png)
+[Can't read a thing?](https://raw.githubusercontent.com/Bandie/ding/master/img/dingScreenshot.png)
 
 ## Installation
 In all steps please read carefully what the certification generate scripts want from you. The certificate information needn't to be true at all and can be random. They only need to be different from each other.
