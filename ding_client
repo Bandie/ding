@@ -63,7 +63,10 @@ def main():
     print("Please check your paths in the config file. (Have you forgotten to generate the Certificates?)", sep="", file=sys.stderr)
     quit(2)
 
-  conn = context.wrap_socket(socket.socket())
+  if(":" in host):
+    conn = context.wrap_socket(socket.socket(family=socket.AF_INET6))
+  else:
+    conn = context.wrap_socket(socket.socket(family=socket.AF_INET))
 
 
   try:

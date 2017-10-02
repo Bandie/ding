@@ -102,7 +102,10 @@ def init():
     quit(2)
 
   try:
-    bindsocket = socket.socket()
+    if(":" in host):
+      bindsocket = socket.socket(family=socket.AF_INET6)
+    else:
+      bindsocket = socket.socket(family=socket.AF_INET)
     bindsocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     bindsocket.bind((host, port))
     bindsocket.listen(5)
