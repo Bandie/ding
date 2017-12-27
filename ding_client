@@ -8,6 +8,9 @@ import configparser
 
 CONFIG = "ding_client.cfg"
 
+global exitcode
+exitcode = 1
+
 def readConfig():
   cfg = configparser.SafeConfigParser()
   try:
@@ -27,8 +30,6 @@ def readConfig():
 
 
 def send(conn, cmd):
-
-  global exitcode
 
   conn.connect((host, port))
   buf = conn.recv(1024)
