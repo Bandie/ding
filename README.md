@@ -24,7 +24,8 @@ In all steps please read carefully what the certification generate scripts want 
 7. Try out the client using `./ding_client <command>`.
 
 ## Optional: Cleartext password with timeout
-If you want to be sure that the ability of the remote connection won't be abused by bad people using your computer, you may want to add a password. 
+If you want to be sure that the ability of the remote connection won't be abused by bad people using your computer, you may want to add a password (saved in cleartext). 
+The password will be wrapped within the TLS connection though.
 
 To do so:
 
