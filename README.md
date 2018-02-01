@@ -1,9 +1,9 @@
 # ding
 ## What is ding?
-ding is a client-server thing written in python3. Its aim is to execute a set of commands remotely, which commands can be set in the server's config file.
+ding is a client-server thing written in python3. Its aim is to execute a set of commands remotely. The commands can be set in the server's config file.
 
 ## How does it work?
-The server will wait for a command to be sent by a client. If the command is present within the servers config file it will then execute the command, else nothing will happen.
+The server will wait for a command to be sent by a client. If the command is present within the server's config file it will then execute the command, else nothing will happen.
 
 ## What about ding's security?
 The authentication is done via a SSL Client Certificate signed by an (self generated) Certificate Authority. The scripts for generating a CA and signing the Server/Client Certificates are also included to make it (relatively) easy. [ This involves typing in a few certificate details and entering a previously defined CA password. ]
