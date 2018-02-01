@@ -44,6 +44,12 @@ def send(conn, cmd):
     elif(buf == b"ERR CMD_ERR"):
       print("Error. Server said: The command doesn't work because the file doesn't exist on the server.")
       exitcode = 2
+    elif(buf == b"ERR PW"):
+      print("Error. Password required. The password was wrong.")
+      exitcode = 4
+    elif(b"OK PW" in buf):
+      bufr=str(buf.decode('utf-8'))
+      print("Password accepted. Timeout:", bufr.replace("OK PW ",""), "seconds.")
 
   else:
     conn.sendall(b"NO.")

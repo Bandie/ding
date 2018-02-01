@@ -9,7 +9,7 @@ The server awaits commands sent by the client. A command must be defined in the 
 The authentication is done by an SSL Client Certificate signed by an (own generated) Certificate Authority. The scripts for generating a CA and signing a Server/Client Certificate are also in here to make it (relatively) easy. [ You need only to press enter in the most cases, type in some certificate information and entering a previously defined CA password. ]
 
 ## Pic or didn't happen
-![Screenshot of CircleArt](/img/dingScreenshot.png)
+![Screenshot of ding](/img/dingScreenshot.png)
 [Can't read a thing?](https://raw.githubusercontent.com/Bandie/ding/master/img/dingScreenshot.png)
 
 ## Installation
@@ -23,4 +23,14 @@ In all steps please read carefully what the certification generate scripts want 
 6. Start the server using `./ding_server`. You may want to put this in a tmux session ([Ctrl+B, D] ;) ).
 7. Try out the client using `./ding_client <command>`.
 
+## Optional: Cleartext password with timeout
+If you want to be sure that the ability of the remote connection won't be abused by bad people using your computer, you may want to add a password. 
 
+To do so:
+
+1. Open your `ding_server.cfg`.
+2. Set `pw_on=true`.
+3. Set a password, like `password=abc def`.
+4. Set a password timeout: `pwtimeout=10` for 10 seconds.
+
+If you have a password with special characters like spaces or something else, you might want to embrace the password in quotation marks, like `./ding_client "abc def"`.

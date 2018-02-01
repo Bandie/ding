@@ -3,7 +3,7 @@
 # Author: Bandie Canis
 # License: 2-Clause BSD license
 
-import ssl, socket, subprocess, time
+import ssl, socket, subprocess, time, os
 import configparser
 
 CONFIG = "ding_server.cfg"
@@ -12,29 +12,37 @@ def getTimestamp():
   t = "[" + time.strftime("%Y-%m-%d %H:%M:%S") + "]"
   return t
 
-def execFromConfig(option):
+def execFromConfig(option, pw=False):
   cfg = configparser.SafeConfigParser()
   cfg.read(CONFIG)  
 
-  try:
-    cmd = cfg.get("Commands", option).replace("\"", "").replace("\'", "")
-    cmd = cmd.split(" ")
+  if(pw):
+    if(option == password):
+      return 4
+    else:
+      return 5
+      
+
+  else:
+
     try:
-      subprocess.Popen(cmd)
-      return 0
+      cmd = cfg.get("Commands", option).replace("\"", "").replace("\'", "")
+      cmd = cmd.split(" ")
+      try:
+        subprocess.Popen(cmd)
+        return 0
 
-    except FileNotFoundError:
-      print(getTimestamp(), "Can't execute", cmd, ". File not found.")
-      return 2
+      except FileNotFoundError:
+        print(getTimestamp(), "Can't execute", cmd, ". File not found.")
+        return 2
 
-  except configparser.NoOptionError:
-    print(getTimestamp(), "No execution set:", option)
-    return 1
+    except configparser.NoOptionError:
+      print(getTimestamp(), "No execution set:", option)
+      return 1
 
 
   
 def main():
-
   while True:
     newsocket, fromaddr = bindsocket.accept()
     try:
@@ -44,10 +52,16 @@ def main():
       
       con_loop = True
       while con_loop:
+        global tmppw_on, pw_on, pwtimeout
+        if('timeout' in locals() and timeout<time.time()):
+          del timeout
+          tmppw_on=pw_on
+          print(getTimestamp(), "Locked.")
+        
         try:
           buf = connstream.recv(1024)
           if not buf: break
-          buf = buf.decode("utf-8").upper()
+          buf = buf.decode("utf-8")
         except ssl.SSLEOFError:
           print(getTimestamp(), "SSL-EOF-Error.")
           con_loop = False
@@ -55,15 +69,29 @@ def main():
           print(getTimestamp(), "Connection reset.")
           serve()
         
-        print(getTimestamp(), " ", fromaddr[0], ": ", buf, sep="")
 
-        retval = execFromConfig(buf)
-        if(retval == 0):
-          connstream.send(b"OK CMD")
-        elif(retval == 1):
-          connstream.send(b"ERR NO_CMD")
-        elif(retval == 2):
-          connstream.send(b"ERR CMD_ERR")
+               
+        if(tmppw_on):
+          retval = execFromConfig(buf, True)
+          if(retval == 5):
+            print(getTimestamp(), " ", fromaddr[0], ": Wrong Password.", sep="")
+            connstream.send(b"ERR PW")
+          if(retval == 4):
+            print(getTimestamp(), " ", fromaddr[0], ": Unlocked for ", pwtimeout, "sec.", sep="")
+            pwokstr = "OK PW " + str(pwtimeout)
+            connstream.send(bytes(pwokstr, "utf-8"))
+            timeout=time.time() + pwtimeout
+            tmppw_on = False
+           
+        else:
+          print(getTimestamp(), " ", fromaddr[0], ": ", buf, sep="")
+          retval = execFromConfig(buf)
+          if(retval == 0):
+            connstream.send(b"OK CMD")
+          elif(retval == 1):
+            connstream.send(b"ERR NO_CMD")
+          elif(retval == 2):
+            connstream.send(b"ERR CMD_ERR")
         
 
     except ssl.SSLError as e:
@@ -74,7 +102,7 @@ def main():
 
 def init():
 
-  global host, port, cafile, certfile, keyfile, context, bindsocket
+  global host, port, cafile, certfile, keyfile, pw_on, password, pwtimeout, tmppw_on, context, bindsocket
   
   cfg = configparser.SafeConfigParser()
   cfg.read(CONFIG)
@@ -85,6 +113,14 @@ def init():
     cafile=cfg.get("Security", "cafile").replace("\"","").replace("\'","")
     certfile=cfg.get("Security", "certfile").replace("\"","").replace("\'","")
     keyfile=cfg.get("Security", "keyfile").replace("\"","").replace("\'","")
+    pw_on=cfg.get("Security", "pw_on").replace("\"","").replace("\'","")
+    password=cfg.get("Security", "password").replace("\"","").replace("\'","")
+    pwtimeout=int(cfg.get("Security", "pwtimeout").replace("\"","").replace("\'",""))
+    if(pw_on.upper() == "TRUE"):
+      pw_on = True
+    else:
+      pw_on = False
+    tmppw_on=pw_on
   except configparser.NoOptionError as e:
     print("Error in configuration file:", e)
     quit(1)
@@ -120,9 +156,12 @@ def init():
         "\nCAFile: ", cafile, 
         "\nCertfile: ", certfile, 
         "\nKeyfile: ", keyfile,
+        "\nPassword lock: ", pw_on,
+        "\nPassword timeout: ", pwtimeout,
         "\n===========",
         sep="")
- 
+
+
 
 if(__name__ == "__main__"):
 
