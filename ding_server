@@ -6,7 +6,6 @@
 import ssl, socket, subprocess, time, os
 import configparser
 
-CONFIG = "ding_server.cfg"
 
 def getTimestamp():
   t = "[" + time.strftime("%Y-%m-%d %H:%M:%S") + "]"
@@ -102,8 +101,13 @@ def main():
 
 def init():
 
-  global host, port, cafile, certfile, keyfile, pw_on, password, pwtimeout, tmppw_on, context, bindsocket
+  global CONFIG, host, port, cafile, certfile, keyfile, pw_on, password, pwtimeout, tmppw_on, context, bindsocket
   
+  if(os.name == 'nt'):
+    CONFIG = "ding_server.win.cfg"
+  else:
+    CONFIG = "ding_server.cfg"
+
   cfg = configparser.SafeConfigParser()
   cfg.read(CONFIG)
 
@@ -153,6 +157,7 @@ def init():
     quit(1)
  
   print("Running ding server on ", host, ":", port, 
+        "\nConfig: ", CONFIG,
         "\nCAFile: ", cafile, 
         "\nCertfile: ", certfile, 
         "\nKeyfile: ", keyfile,

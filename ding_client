@@ -3,15 +3,20 @@
 # Author: Bandie Canis
 # License: 2-Clause BSD License
 
-import sys, ssl, socket
+import sys, ssl, socket, os
 import configparser
 
-CONFIG = "ding_client.cfg"
 
 global exitcode
 exitcode = 1
 
 def readConfig():
+
+  if(os.name == 'nt'):
+    CONFIG = "ding_client.win.cfg"
+  else:
+    CONFIG = "ding_client.cfg"
+
   cfg = configparser.SafeConfigParser()
   try:
     cfg.read(CONFIG)
@@ -39,7 +44,7 @@ def send(conn, cmd):
     if(buf == b"OK CMD"):
       exitcode = 0
     elif(buf == b"ERR NO_CMD"):
-      print("Error. Server said: The command doesn't exist/isn't set.", file=sys.stderr)
+      print("Error. Server said: The command isn't set on the server.", file=sys.stderr)
       exitcode = 1
     elif(buf == b"ERR CMD_ERR"):
       print("Error. Server said: The command doesn't work because the file doesn't exist on the server.")
