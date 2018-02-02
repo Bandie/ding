@@ -26,7 +26,7 @@ Step 1 to 3 can only be run on UNIX or GNU/Linux.
 4. Move `ding_client`, `ding_client.cfg`, `ding_client.crt`, `ding_client.key` and `CA.crt` to the computer which should be able to send commands to the server.
    * UNIX or GNU/Linux: Also move `ding_client.cfg` to that computer.
    * Windows: Also move `ding_client.win.cfg` to that computer.
-5. Do some configuration on the server and client (ding\_server.cfg, ding\_client.cfg or ding\_server.win.cfg, ding\_client.win.cfg on Windows).
+5. Do some configuration on the server and client (`ding_server.cfg`, `ding_client.cfg` or `ding_server.win.cfg`, `ding_client.win.cfg` on Windows).
 6. Start the server using `./ding_server` or `python .\ding_server` on Windows. (You may want to put this in a tmux session. [Ctrl+B, D] ;) ).
 7. Try out the client using `./ding_client <command>` òr `python .\ding_client <command>` on Windows.
 
