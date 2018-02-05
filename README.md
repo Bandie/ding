@@ -2,18 +2,23 @@
 ## What is ding?
 ding is a client-server thing written in python3. Its aim is to execute a set of commands remotely. The commands can be set in the server's config file.
 
+
 ## How does it work?
 The server will wait for a command to be sent by a client. If the command is present within the server's config file it will then execute the command, else nothing will happen.
 
+
 ## What about ding's security?
 The authentication is done via a SSL Client Certificate signed by an (self generated) Certificate Authority. The scripts for generating a CA and signing the Server/Client Certificates are also included to make it (relatively) easy. [ This involves typing in a few certificate details and entering a previously defined CA password. ]
+
 
 ## Pic or didn't happen
 ![Screenshot of ding](/img/dingScreenshot.png)
 [Can't read a thing?](https://raw.githubusercontent.com/Bandie/ding/master/img/dingScreenshot.png)
 
+
 ## Requirements
 * Install python3 on your target computers.
+
 
 ## Installation
 At every step please read carefully what the generate certificates scripts want from you. The information on the certificates doesn't need to be true and can be totally random. They only need to be different from one another.
@@ -30,9 +35,10 @@ Step 1 to 3 can only be run on UNIX or GNU/Linux.
 6. Start the server using `./ding_server` or `python .\ding_server` on Windows. (You may want to put this in a tmux session. [Ctrl+B, D] ;) ).
 7. Try out the client using `./ding_client <command>` òr `python .\ding_client <command>` on Windows.
 
+
 ## Optional: Cleartext password with timeout
 If you want to be sure that this power won't be abused by bad people using your computer, you may want to add a password (saved in cleartext).
-The password will be sent inside the TLS connection.
+The password will be sent inside the TLS connection. *Beware of the shell history! You might want to do something like `$ history -c` after sending the password via the client or play around with bash's HISTCONTROL variable.*
 
 To do so:
 
