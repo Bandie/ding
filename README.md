@@ -38,9 +38,12 @@ Step 1 to 3 can only be run on UNIX or GNU/Linux.
 
 ## Optional: Cleartext password with timeout
 If you want to be sure that this power won't be abused by bad people using your computer, you may want to add a password (saved in cleartext).
-The password will be sent inside the TLS connection. *Beware of the shell history! You might want to do something like `$ history -c` after sending the password via the client or play around with bash's HISTCONTROL variable.*
+The password will be sent inside the TLS connection. 
 
-To do so:
+### Warning! Beware of the shell history! 
+You might want to do something like `$ history -c` after sending the password via the client or play around with bash's HISTCONTROL variable.
+
+### How to enable the password
 
 1. Open your `ding_server.cfg` or `ding_server.win.cfg`.
 2. Set `pw_on=true`.
