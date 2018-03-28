@@ -3,7 +3,7 @@
 # Author: Bandie Canis
 # License: 2-Clause BSD license
 
-import ssl, socket, subprocess, time, os
+import ssl, socket, subprocess, time, os, sys
 import configparser
 
 
@@ -104,9 +104,9 @@ def init():
   global CONFIG, host, port, cafile, certfile, keyfile, pw_on, password, pwtimeout, tmppw_on, context, bindsocket
   
   if(os.name == 'nt'):
-    CONFIG = "ding_server.win.cfg"
+    CONFIG = "dingd.win.cfg"
   else:
-    CONFIG = "ding_server.cfg"
+    CONFIG = "dingd.cfg"
 
   cfg = configparser.SafeConfigParser()
   cfg.read(CONFIG)
@@ -125,10 +125,9 @@ def init():
     else:
       pw_on = False
     tmppw_on=pw_on
-  except configparser.NoOptionError as e:
-    print("Error in configuration file:", e)
+  except configparser.NoSectionError as e:
+    print("Error in configuration file:", e, file=sys.stderr)
     quit(1)
-
 
   try:
     context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH, cafile=cafile)
@@ -156,7 +155,7 @@ def init():
     print("Error: Can't bind for port number ", port, ". Permission denied.", sep="")
     quit(1)
  
-  print("Running ding server on ", host, ":", port, 
+  print("Running dingd on ", host, ":", port, 
         "\nConfig: ", CONFIG,
         "\nCAFile: ", cafile, 
         "\nCertfile: ", certfile, 

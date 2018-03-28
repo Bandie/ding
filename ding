@@ -13,9 +13,9 @@ exitcode = 1
 def readConfig():
 
   if(os.name == 'nt'):
-    CONFIG = "ding_client.win.cfg"
+    CONFIG = "ding.win.cfg"
   else:
-    CONFIG = "ding_client.cfg"
+    CONFIG = "ding.cfg"
 
   cfg = configparser.SafeConfigParser()
   try:
@@ -30,7 +30,7 @@ def readConfig():
     certfile = cfg.get("Client", "certfile")
     keyfile = cfg.get("Client", "keyfile")
   except configparser.NoSectionError:
-    print("No suitable config found. Expecting some config in", CONFIG)
+    print("No suitable config found. Expecting some config in", CONFIG, file=sys.stderr)
     quit(3)
 
 
@@ -47,10 +47,10 @@ def send(conn, cmd):
       print("Error. Server said: The command isn't set on the server.", file=sys.stderr)
       exitcode = 1
     elif(buf == b"ERR CMD_ERR"):
-      print("Error. Server said: The command doesn't work because the file doesn't exist on the server.")
+      print("Error. Server said: The command doesn't work because the file doesn't exist on the server.", file=sys.stderr)
       exitcode = 2
     elif(buf == b"ERR PW"):
-      print("Error. Password required. The password was wrong.")
+      print("Error. Password required. The password was wrong.", file=sys.stderr)
       exitcode = 4
     elif(b"OK PW" in buf):
       bufr=str(buf.decode('utf-8'))

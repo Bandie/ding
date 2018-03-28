@@ -28,12 +28,12 @@ Step 1 to 3 can only be run on UNIX or GNU/Linux.
 1. Run `./1_generateCA.sh` to generate a CA.
 2. Run `./2_generateServCert.sh` to generate a signed Server Certificate.
 3. Run `./3_generateClientCert.sh` to generate a signed Client Certificate.
-4. Move `ding_client`, `ding_client.cfg`, `ding_client.crt`, `ding_client.key` and `CA.crt` to the computer which should be able to send commands to the server.
-   * UNIX or GNU/Linux: Also move `ding_client.cfg` to that computer.
-   * Windows: Also move `ding_client.win.cfg` to that computer.
-5. Do some configuration on the server and client (`ding_server.cfg`, `ding_client.cfg` or `ding_server.win.cfg`, `ding_client.win.cfg` on Windows).
-6. Start the server using `./ding_server` or `python .\ding_server` on Windows. (You may want to put this in a tmux session. [Ctrl+B, D] ;) ).
-7. Try out the client using `./ding_client <command>` òr `python .\ding_client <command>` on Windows.
+4. Move `ding`, `ding.cfg`, `ding.crt`, `ding.key` and `CA.crt` to the computer which should be able to send commands to the server.
+   * UNIX or GNU/Linux: Also move `ding.cfg` to that computer.
+   * Windows: Also move `ding.win.cfg` to that computer.
+5. Do some configuration on the server and client (`dingd.cfg`, `ding.cfg` or `dingd.win.cfg`, `ding.win.cfg` on Windows).
+6. Start the server using `./dingd` or `python .\dingd` on Windows. (You may want to put this in a tmux session. [Ctrl+B, D] ;) ).
+7. Try out the client using `./ding <command>` òr `python .\ding <command>` on Windows.
 
 
 ## Optional: Cleartext password with timeout
@@ -45,9 +45,9 @@ You might want to do something like `$ history -c` after sending the password vi
 
 ### How to enable the password
 
-1. Open your `ding_server.cfg` or `ding_server.win.cfg`.
+1. Open your `dingd.cfg` or `dingd.win.cfg`.
 2. Set `pw_on=true`.
 3. Set a password, like `password=abc def`.
 4. Set a password timeout: `pwtimeout=10` for 10 seconds.
 
-If you have a password with special characters as in spaces and the like, you may want to use quotation marks around your password. `./ding_client "abc def"` or `python .\ding_client "abc def"` on Windows.
+If you have a password with special characters as in spaces and the like, you may want to use quotation marks around your password. `./ding "abc def"` or `python .\ding "abc def"` on Windows.

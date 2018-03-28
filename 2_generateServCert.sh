@@ -1,28 +1,28 @@
 #!/bin/bash
 
 ## Server private key
-echo -n "Where to save your server's key file? ($PWD/ding_server.key): "
+echo -n "Where to save your server's key file? ($PWD/dingd.key): "
 read temp
 
 if [ -n "$temp" ]
 then
   save=$temp
 else
-  save="$PWD/ding_server.key"
+  save="$PWD/dingd.key"
 fi
 key=$save
 openssl genrsa -out $save 4096
 
 
 ## CSR
-echo -n "Where to save your Certificate Signing Request (CSR)? ($PWD/ding_server.csr): "
+echo -n "Where to save your Certificate Signing Request (CSR)? ($PWD/dingd.csr): "
 read temp
 
 if [ -n "$temp" ]
 then
   save=$temp
 else
-  save="$PWD/ding_server.csr"
+  save="$PWD/dingd.csr"
 fi
 csr=$save
 echo -e "\033[01;33mPlease enter some information. THEY MUST BE DIFFERENT FROM THE CA's INFORMATION.\033[00m"
@@ -50,14 +50,14 @@ else
   loadCAkey="$PWD/CA.key"
 fi
 
-echo -n "Where to save your signed server certificate? ($PWD/ding_server.crt): "
+echo -n "Where to save your signed server certificate? ($PWD/dingd.crt): "
 read temp
 
 if [ -n "$temp" ]
 then
   save=$temp
 else
-  save="$PWD/ding_server.crt"
+  save="$PWD/dingd.crt"
 fi
 
 echo -n "How many days should the certificate be valid? (365): "
