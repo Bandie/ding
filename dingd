@@ -67,7 +67,7 @@ def main():
           del timeout
           tmppw_on=pw_on
           print(getTimestamp(), "Locked.")
- 
+
         try:
           buf = connstream.recv(1024)
           if not buf: break
@@ -163,7 +163,7 @@ def init():
   except PermissionError:
     print("Error: Can't bind for port number ", port, ". Permission denied.", sep="")
     quit(1)
- 
+
   print("Running dingd on ", host, ":", port,
         "\nConfig: ", CONFIG,
         "\nCAFile: ", cafile,
