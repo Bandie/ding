@@ -7,7 +7,11 @@ import sys, ssl, socket, os
 import configparser
 
 
-global exitcode
+host = None
+port = 0
+cafile = None
+certfile = None
+keyfile = None
 exitcode = 1
 
 def readConfig():
@@ -22,7 +26,6 @@ def readConfig():
     cfg.read(CONFIG)
 
     global host, port, cafile, certfile, keyfile
-    
     host = cfg.get("Client", "host")
     port = int(cfg.get("Client", "port"))
 
@@ -38,7 +41,7 @@ def send(conn, cmd):
 
   conn.connect((host, port))
   buf = conn.recv(1024)
-  if(buf == b"OK 1337\n"):  
+  if(buf == b"OK 1337\n"): 
     conn.sendall(cmd)
     buf = conn.recv(1024)
     if(buf == b"OK CMD"):
@@ -61,7 +64,7 @@ def send(conn, cmd):
     print("The server seems to be crazy. Nothing sent.", file=sys.stderr)
 
   conn.close()
-
+  quit(exitcode)
 
 
 def main():
