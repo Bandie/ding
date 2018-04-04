@@ -52,7 +52,6 @@ def execFromConfig(option, pw=False):
       print(getTimestamp(), "No execution set:", option)
       return 1
 
- 
 def main():
   while True:
     newsocket, fromaddr = bindsocket.accept()
