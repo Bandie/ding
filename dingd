@@ -48,7 +48,7 @@ def main():
       connstream = context.wrap_socket(newsocket, server_side=True)    
       print(getTimestamp(), "Incoming connection:", fromaddr[0])
       connstream.send(b"OK 1337\n")
-      
+
       con_loop = True
       while con_loop:
         global tmppw_on, pw_on, pwtimeout
