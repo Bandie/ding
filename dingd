@@ -100,7 +100,6 @@ def main():
             connstream.send(b"ERR NO_CMD")
           elif(retval == 2):
             connstream.send(b"ERR CMD_ERR")
-        
 
     except ssl.SSLError as e:
       print(getTimestamp(), e)
