@@ -67,7 +67,7 @@ def main():
           del timeout
           tmppw_on=pw_on
           print(getTimestamp(), "Locked.")
-        
+ 
         try:
           buf = connstream.recv(1024)
           if not buf: break
@@ -78,9 +78,7 @@ def main():
         except ConnectionResetError:
           print(getTimestamp(), "Connection reset.")
           serve()
-        
 
-               
         if(tmppw_on):
           retval = execFromConfig(buf, True)
           if(retval == 5):
@@ -92,7 +90,7 @@ def main():
             connstream.send(bytes(pwokstr, "utf-8"))
             timeout=time.time() + pwtimeout
             tmppw_on = False
-           
+
         else:
           print(getTimestamp(), " ", fromaddr[0], ": ", buf, sep="")
           retval = execFromConfig(buf)
