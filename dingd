@@ -33,7 +33,7 @@ def execFromConfig(option, pw=False):
     if(option == password):
       return 4
     else:
-      return 5 
+      return 5
 
   else:
 
@@ -52,13 +52,12 @@ def execFromConfig(option, pw=False):
       print(getTimestamp(), "No execution set:", option)
       return 1
 
-
-  
+ 
 def main():
   while True:
     newsocket, fromaddr = bindsocket.accept()
     try:
-      connstream = context.wrap_socket(newsocket, server_side=True) 
+      connstream = context.wrap_socket(newsocket, server_side=True)
       print(getTimestamp(), "Incoming connection:", fromaddr[0])
       connstream.send(b"OK 1337\n")
       

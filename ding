@@ -41,7 +41,7 @@ def send(conn, cmd):
 
   conn.connect((host, port))
   buf = conn.recv(1024)
-  if(buf == b"OK 1337\n"): 
+  if(buf == b"OK 1337\n"):
     conn.sendall(cmd)
     buf = conn.recv(1024)
     if(buf == b"OK CMD"):
