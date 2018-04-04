@@ -110,7 +110,7 @@ def main():
 def init():
 
   global CONFIG, host, port, cafile, certfile, keyfile, pw_on, password, pwtimeout, tmppw_on, context, bindsocket
-  
+
   if(os.name == 'nt'):
     CONFIG = "dingd.win.cfg"
   else:
