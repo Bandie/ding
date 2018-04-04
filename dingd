@@ -6,6 +6,20 @@
 import ssl, socket, subprocess, time, os, sys
 import configparser
 
+CONFIG = None
+host = None
+port = 0
+cafile = None
+certfile = None
+keyfile = None
+pw_on = None
+password = None
+pwtimeout = 30
+tmppw_on = None
+context = None
+bindsocket = None
+
+
 
 def getTimestamp():
   t = "[" + time.strftime("%Y-%m-%d %H:%M:%S") + "]"
@@ -13,14 +27,13 @@ def getTimestamp():
 
 def execFromConfig(option, pw=False):
   cfg = configparser.SafeConfigParser()
-  cfg.read(CONFIG)  
+  cfg.read(CONFIG)
 
   if(pw):
     if(option == password):
       return 4
     else:
-      return 5
-      
+      return 5 
 
   else:
 
@@ -45,7 +58,7 @@ def main():
   while True:
     newsocket, fromaddr = bindsocket.accept()
     try:
-      connstream = context.wrap_socket(newsocket, server_side=True)    
+      connstream = context.wrap_socket(newsocket, server_side=True) 
       print(getTimestamp(), "Incoming connection:", fromaddr[0])
       connstream.send(b"OK 1337\n")
       
@@ -155,10 +168,10 @@ def init():
     print("Error: Can't bind for port number ", port, ". Permission denied.", sep="")
     quit(1)
  
-  print("Running dingd on ", host, ":", port, 
+  print("Running dingd on ", host, ":", port,
         "\nConfig: ", CONFIG,
-        "\nCAFile: ", cafile, 
-        "\nCertfile: ", certfile, 
+        "\nCAFile: ", cafile,
+        "\nCertfile: ", certfile,
         "\nKeyfile: ", keyfile,
         "\nPassword lock: ", pw_on,
         "\nPassword timeout: ", pwtimeout,
