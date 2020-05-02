@@ -21,7 +21,7 @@ def readConfig():
   else:
     CONFIG = "ding.cfg"
 
-  cfg = configparser.SafeConfigParser()
+  cfg = configparser.ConfigParser()
   try:
     cfg.read(CONFIG)
 

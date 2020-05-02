@@ -3,7 +3,7 @@
 # Author: Bandie Canis
 # License: 2-Clause BSD license
 
-import ssl, socket, subprocess, time, os, sys
+import ssl, socket, subprocess, time, os, sys, getopt
 import configparser
 
 CONFIG = None
@@ -26,7 +26,7 @@ def getTimestamp():
   return t
 
 def execFromConfig(option, pw=False):
-  cfg = configparser.SafeConfigParser()
+  cfg = configparser.ConfigParser()
   cfg.read(CONFIG)
 
   if(pw):
@@ -107,16 +107,19 @@ def main():
     except EOFError:
       print(getTimestamp(), "EOF")
 
-def init():
+def init(cfg=None):
 
   global CONFIG, host, port, cafile, certfile, keyfile, pw_on, password, pwtimeout, tmppw_on, context, bindsocket
 
-  if(os.name == 'nt'):
-    CONFIG = "dingd.win.cfg"
+  if(cfg==None):
+    if(os.name == 'nt'):
+      CONFIG = "dingd.win.cfg"
+    else:
+      CONFIG = "dingd.cfg"
   else:
-    CONFIG = "dingd.cfg"
+    CONFIG = cfg
 
-  cfg = configparser.SafeConfigParser()
+  cfg = configparser.ConfigParser()
   cfg.read(CONFIG)
 
   try:
@@ -176,10 +179,17 @@ def init():
 
 
 if(__name__ == "__main__"):
-
   try:
-    init()
+    conf = None
+    opts, args = getopt.getopt(sys.argv[1:], "c:")
+    for o, a in opts:
+      if o == "-c":
+        conf = a
+    init(conf)
     main()
+  except getopt.GetoptError as e:
+    print("Error using options. Allowed options:\n-c [FILE] - Config file\n")
+    quit(2)
   except KeyboardInterrupt:
     print("\r\rServer stopped.")
 
