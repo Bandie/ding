@@ -1,0 +1,10 @@
+[Unit]
+Description=dingd Service
+
+[Service]
+ExecStart=/root/ding/dingd -c /path/to/config/file/dingd.cfg
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
