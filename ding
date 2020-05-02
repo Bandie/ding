@@ -3,7 +3,7 @@
 # Author: Bandie Canis
 # License: 2-Clause BSD License
 
-import sys, ssl, socket, os
+import sys, ssl, socket, os, getopt
 import configparser
 
 
@@ -14,12 +14,15 @@ certfile = None
 keyfile = None
 exitcode = 1
 
-def readConfig():
+def init(conf):
 
-  if(os.name == 'nt'):
-    CONFIG = "ding.win.cfg"
+  if(conf == None):
+    if(os.name == 'nt'):
+      CONFIG = "ding.win.cfg"
+    else:
+      CONFIG = "ding.cfg"
   else:
-    CONFIG = "ding.cfg"
+    CONFIG = conf
 
   cfg = configparser.ConfigParser()
   try:
@@ -67,7 +70,7 @@ def send(conn, cmd):
   quit(exitcode)
 
 
-def main():
+def main(arg):
   try:
     context = ssl.SSLContext(ssl.PROTOCOL_TLS)
     context.verify_mode = ssl.CERT_REQUIRED
@@ -85,7 +88,7 @@ def main():
 
 
   try:
-    send(conn, bytes(sys.argv[1], sys.stdin.encoding))
+    send(conn, bytes(arg[0], sys.stdin.encoding))
   except IndexError:
     print(sys.argv[0], ": Missing argument.\nSyntax: ", sys.argv[0], " <COMMAND>", file=sys.stderr)
   except ConnectionRefusedError:
@@ -98,7 +101,16 @@ def main():
 
 
 if(__name__ == "__main__"):
-  readConfig()
-  main()
-  quit(exitcode)
+  try:
+    conf = None
+    opts, args = getopt.getopt(sys.argv[1:], "c:")
+    for o, a in opts:
+      if o == "-c":
+        conf = a
+    init(conf)
+    main(args)
+  except getopt.GetoptError as e:
+    print("Error using options. Allowed options:\n-c [FILE] - Config file\n")
+    quit(2)
 
+  quit(exitcode)
